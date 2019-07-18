@@ -38,7 +38,7 @@ class ContactHelper:
     def modify_first(self, note):
         wd = self.app.wd
         self.app.open_home_page()
-        wd.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='jd@sacredheart.com'])[1]/following::img[2]").click()
+        wd.find_element_by_xpath("(.//img[@alt='Edit'])").click()
         wd.find_element_by_name("notes").click()
         wd.find_element_by_name("notes").clear()
         wd.find_element_by_name("notes").send_keys(note)
