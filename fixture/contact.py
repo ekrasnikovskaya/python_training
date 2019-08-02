@@ -69,15 +69,11 @@ class ContactHelper:
     def get_contact_list(self):
         if self.contact_cache is None:
             wd = self.app.wd
-            # self.app.open_home_page()
             self.contact_cache = []
             for element in wd.find_elements_by_name("entry"):
-                text = element.text
-                newtext = text.split(' ')
-                firstname = newtext[1]
-                lastname = newtext[0]
+                fields = element.find_elements_by_tag_name("td")
                 id = element.find_element_by_name("selected[]").get_attribute("value")
-                self.contact_cache.append(Contact(firstname=firstname, lastname=lastname, id=id))
+                self.contact_cache.append(Contact(firstname=fields[2].text, lastname=fields[1].text, id=id))
         return list(self.contact_cache)
 
 
