@@ -1,4 +1,5 @@
 from model.contact import Contact
+from selenium.webdriver.support.ui import Select
 import re
 
 
@@ -149,6 +150,43 @@ class ContactHelper:
         secondaryphone = re.search("P: (.*)", text).group(1)
         return Contact(homephone=homephone, workphone=workphone,
                        mobilephone=mobilephone, secondaryphone=secondaryphone)
+
+    def add_contact_to_group(self, contact_id, group_name):
+        wd = self.app.wd
+        self.select_contact_by_id(contact_id)
+        group_list = wd.find_element_by_name("to_group")
+        select = Select(group_list)
+        select.select_by_visible_text(group_name)
+        wd.find_element_by_name("add").click()
+        self.app.open_home_page()
+        self.contact_cache = None
+
+    def delete_contact_from_group(self, group, contact_id):
+        wd = self.app.wd
+        group_list = wd.find_element_by_name("group")
+        select = Select(group_list)
+        select.select_by_visible_text(group)
+        self.select_contact_by_id(contact_id)
+        wd.implicitly_wait(2)
+        wd.find_element_by_name("remove").click()
+        self.app.open_home_page()
+        self.contact_cache = None
+
+    def get_contacts_in_group(self, group):
+        wd = self.app.wd
+        contacts_list = []
+        group_list = wd.find_element_by_name("group")
+        select = Select(group_list)
+        select.select_by_visible_text(group)
+        for row in wd.find_elements_by_name("entry"):
+            cells = row.find_elements_by_tag_name("td")
+            id = cells[0].find_element_by_tag_name("input").get_attribute("value")
+            contacts_list.append(Contact(id=id))
+        return list(contacts_list)
+
+
+
+
 
 
 
